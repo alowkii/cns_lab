@@ -1,25 +1,20 @@
 #include<stdio.h>
 
 int IP[] = {2, 6, 3, 1, 4, 8, 5, 7};
-
 int IP_inverse[] = {4, 1, 3, 5, 7, 2, 8, 6};
-
 int S0[4][4] = {
     {1, 0, 3, 2},
     {3, 2, 1, 0},
     {0, 2, 1, 3},
     {3, 1, 3, 2}
 };
-
 int S1[4][4] = {
     {0, 1, 2, 3},
     {2, 0, 1, 3},
     {3, 0, 1, 0},
     {2, 1, 0, 3}
 };
-
 int P4[] = {2, 4, 3, 1};
-
 int EP[] = {4, 1, 2, 3, 2, 3, 4, 1};
 
 //to rearrange according to permutation
@@ -44,19 +39,15 @@ int encrypt_current_cycle(int text, int key){
 	int x1 = text & 0x0F;
 	
 	text = permut(x1, EP, 4, 8);
-	
 	text ^= key;
 	
 	int s0 = text >> 4;
 	int s1 = text & 0x0F;
-	
 	s0 = s_box_substitute(s0, S0);
 	s1 = s_box_substitute(s1, S1);
 	
 	text = (s0<<2) | s1;
-	
 	text = permut(text, P4, 4, 4);
-	
 	text = text^x0;
 	text = (text<<4) | x1;
 	return text;
@@ -66,19 +57,14 @@ int encrypt_current_cycle(int text, int key){
 int encrypt(int ptext, int k1, int k2){
 	//initial permutation
 	int text = permut(ptext, IP, 8, 8);
-	
 	//round 1
 	text = encrypt_current_cycle(text, k1);
-	
 	//swap first 4 bits to last bits
 	text = (text>>4) | ((text & 0b00001111)<<4);
-	
 	//round 2
 	text = encrypt_current_cycle(text, k2);
-	
 	//inverse initial permutation
 	text = permut(text, IP_inverse, 8, 8);
-
 	return text;
 }
 
